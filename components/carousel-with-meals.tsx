@@ -10,45 +10,10 @@ import {
     CarouselPrevious,
 } from '@/components/ui/carousel';
 import { Button } from '@/components/ui/button';
-import { OrderedMeal } from '@/components/order-summary'; // Import the OrderedMeal interface
-import next from 'next';
-
-interface Meal {
-    idMeal: string;
-    strMeal: string;
-    strCategory: string;
-    strArea: string;
-    strMealThumb: string;
-}
-
-async function getMeals(): Promise<Meal[]> {
-    const mealPromises = Array.from({ length: 10 }, () =>
-        fetch('https://themealdb.com/api/json/v1/1/random.php').then((res) => res.json())
-    );
-
-    const mealResults = await Promise.all(mealPromises);
-    return mealResults.flatMap((result) => result.meals);
-}
-
-function generateRandomPrice(minPrice = 2000, maxPrice = 3500) {
-    return Math.floor(Math.random() * (maxPrice - minPrice + 1)) + minPrice;
-}
-
-function getOrGeneratePrice(mealId: string): number {
-    const storedPrices = JSON.parse(localStorage.getItem('mealPrices') || '{}');
-
-    if (storedPrices[mealId]) {
-        return storedPrices[mealId];
-    } else {
-        const newPrice = generateRandomPrice();
-        storedPrices[mealId] = newPrice;
-        localStorage.setItem('mealPrices', JSON.stringify(storedPrices));
-        return newPrice;
-    }
-}
+import { getMeals, getOrGeneratePrice, Meal, OrderItem } from '@/lib/utils';
 
 interface CarouselWithMealsProps {
-    onOrderMeal: (meal: OrderedMeal) => void;
+    onOrderMeal: (meal: OrderItem) => void;
 }
 
 export function CarouselWithMeals({ onOrderMeal }: CarouselWithMealsProps) {
@@ -63,9 +28,12 @@ export function CarouselWithMeals({ onOrderMeal }: CarouselWithMealsProps) {
     }, []);
 
     const handleOrderClick = (meal: Meal) => {
-        const mealWithPrice: OrderedMeal = {
-            ...meal,
+        const mealWithPrice: OrderItem = {
+            id: meal.idMeal,
+            name: meal.strMeal,
             price: getOrGeneratePrice(meal.idMeal),
+            amount: 1,
+            thumbnail: meal.strMealThumb,
         };
         onOrderMeal(mealWithPrice);
     };

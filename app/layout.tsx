@@ -41,6 +41,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
                             className="w-max sm:w-3/4 md:1/2"
                             src={Logo}
                             alt="Lil-bits logo"
+                            width={50}
+                            height={50}
                         ></Image>
                     </a>
 

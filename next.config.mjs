@@ -3,6 +3,6 @@ const nextConfig = {};
 // next.config.mjs
 export default {
   images: {
-    domains: ["www.themealdb.com"],
+    domains: ["www.themealdb.com", "www.thecocktaildb.com"],
   },
 };

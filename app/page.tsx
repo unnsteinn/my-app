@@ -1,26 +1,26 @@
 'use client';
 import React, { useState } from 'react';
 import { CarouselWithMeals } from '@/components/carousel-with-meals';
-import OrderSummary, { OrderedMeal } from '@/components/order-summary';
-import About from './about/page';
+import OrderSummary from '@/components/order-summary';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { addItem, OrderItem, removeItem, storeItems } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
+import axios from 'axios';
+
+type ItemsResponse = { email: string; items: OrderItem[]; date: string };
 
 export default function Home() {
-    const [orderedMeals, setOrderedMeals] = useState<OrderedMeal[]>([]);
+    const [email, setEmail] = useState<string>('');
+    const [orderedItems, setOrderedItems] = useState<OrderItem[]>([]);
+    const [savedOrders, setSavedOrders] = useState<Record<string, ItemsResponse> | undefined>();
 
-    const handleOrderMeal = (meal: OrderedMeal) => {
-        setOrderedMeals((prevOrderedMeals) => [...prevOrderedMeals, meal]);
+    const handleOrderMeal = (meal: OrderItem) => {
+        setOrderedItems((prevOrderedItems) => addItem(prevOrderedItems, meal));
     };
 
-    const handleRemoveMeal = (idMeal: string) => {
-        setOrderedMeals((prevOrderedMeals) => {
-            const indexToRemove = prevOrderedMeals.findIndex((meal) => meal.idMeal === idMeal);
-            if (indexToRemove !== -1) {
-                const updatedMeals = [...prevOrderedMeals];
-                updatedMeals.splice(indexToRemove, 1);
-                return updatedMeals;
-            }
-            return prevOrderedMeals;
-        });
+    const handleRemoveItem = (idMeal: string) => {
+        setOrderedItems((prevState) => removeItem(prevState, idMeal));
     };
 
     return (
@@ -29,9 +29,39 @@ export default function Home() {
                 <CarouselWithMeals onOrderMeal={handleOrderMeal} />
             </div>
             <div className="flex justify-center">
-                <OrderSummary orderedMeals={orderedMeals} onRemoveMeal={handleRemoveMeal} />
+                <OrderSummary items={orderedItems} onRemoveItem={handleRemoveItem}>
+                    <div className="mt-4 flex justify-center">
+                        <Link href="/drinks">
+                            <Button onClick={() => storeItems(orderedItems)}>Next</Button>
+                        </Link>
+                    </div>
+                </OrderSummary>
             </div>
-            {/*<About />*/}
+            <div className="flex justify-center">
+                <Input value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Button
+                    onClick={async () => {
+                        const orders = await axios.get<Record<string, ItemsResponse>>(
+                            `/api/order?email=${email}`
+                        );
+                        setSavedOrders(orders.data);
+                    }}
+                />
+            </div>
+            <div className="flex justify-center">
+                {savedOrders &&
+                    Object.values(savedOrders).map((order) => (
+                        <div key={order.date}>
+                            <span>{order.date}</span>
+                            {order.items.map((order) => (
+                                <div key={order.id}>
+                                    <span>{order.name}</span>
+                                    <span>{order.price}</span>
+                                </div>
+                            ))}
+                        </div>
+                    ))}
+            </div>
         </div>
     );
 }
