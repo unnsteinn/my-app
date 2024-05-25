@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { CarouselWithMeals } from "@/components/carousel-with-meals";
 import OrderSummary, { OrderedMeal } from "@/components/order-summary";
+import About from "./about/page";
 
 export default function Home() {
   const [orderedMeals, setOrderedMeals] = useState<OrderedMeal[]>([]);
@@ -35,6 +36,7 @@ export default function Home() {
           onRemoveMeal={handleRemoveMeal}
         />
       </div>
+      <About />
     </div>
   );
 }
