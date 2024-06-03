@@ -1,4 +1,3 @@
-import { ModeToggle } from '@/components/dark-mode-toggle';
 import { Card } from '@/components/ui/card';
 import {
     Carousel,
@@ -11,13 +10,13 @@ import React from 'react';
 
 export default function About() {
     return (
-        <main className="flex-col justify-center">
+        <main>
             <Carousel>
                 <CarouselContent>
-                    <CarouselItem>
-                        <Card className="p-10 lg:w-1/2">
-                            <h3 className="">About Lil Bits</h3>
-                            <p>
+                    <CarouselItem className="flex justify-center">
+                        <Card className="p-10 lg:w-3/4">
+                            <h3 className="text-5xl">About Lil Bits</h3>
+                            <p className="text-3xl">
                                 Welcome to Lil Bits, where culinary creativity meets comfort and
                                 tradition. Nestled in the heart of Reykjavík, Lil Bits is your go-to
                                 destination for an unforgettable dining experience. Our name
@@ -26,10 +25,10 @@ export default function About() {
                             </p>
                         </Card>
                     </CarouselItem>
-                    <CarouselItem>
+                    <CarouselItem className="flex justify-center">
                         <Card className="p-10 lg:w-1/2">
-                            <h3 className="">Our Story</h3>
-                            <p>
+                            <h3 className="text-5xl">Our Story</h3>
+                            <p className="text-3xl">
                                 Lil Bits was born out of a love for food and community. Founded by
                                 Steve in 1999, our restaurant is built on the idea that the best
                                 meals are the ones that bring people together. With a background in
@@ -39,10 +38,10 @@ export default function About() {
                             </p>
                         </Card>
                     </CarouselItem>
-                    <CarouselItem>
+                    <CarouselItem className="flex justify-center">
                         <Card className="p-10 lg:w-1/2">
-                            <h3 className="">Our Menu</h3>
-                            <p>
+                            <h3 className="text-5xl">Our Menu</h3>
+                            <p className="text-3xl">
                                 Our menu is a delightful blend of classic favorites and unique
                                 creations, all made from the freshest ingredients. From our
                                 signature appetizers to our mouthwatering mains and decadent
@@ -52,10 +51,10 @@ export default function About() {
                             </p>
                         </Card>
                     </CarouselItem>
-                    <CarouselItem>
+                    <CarouselItem className="flex justify-center">
                         <Card className="p-10 lg:w-1/2">
-                            <h3 className="">Our Commitment</h3>
-                            <p>
+                            <h3 className="text-5xl">Our Commitment</h3>
+                            <p className="text-3xl">
                                 We are committed to sustainability and supporting local farmers and
                                 producers. By sourcing our ingredients locally, we ensure that every
                                 dish is as fresh and flavorful as possible, while also supporting
@@ -63,10 +62,10 @@ export default function About() {
                             </p>
                         </Card>
                     </CarouselItem>
-                    <CarouselItem>
+                    <CarouselItem className="flex justify-center">
                         <Card className="p-10 lg:w-1/2">
-                            <h3 className="">Join Us</h3>
-                            <p>
+                            <h3 className="text-5xl">Join Us</h3>
+                            <p className="text-3xl">
                                 We invite you to join us at Lil Bits and discover the little things
                                 that make our restaurant special. Whether you're celebrating a
                                 special occasion, enjoying a night out, or simply craving a

@@ -28,20 +28,20 @@ export function generateRandomPrice(minPrice = 2000, maxPrice = 3500) {
     return Math.floor(Math.random() * (maxPrice - minPrice + 1)) + minPrice;
 }
 
-export function getOrGeneratePrice(
-    id: string,
-    { minPrice = 2000, maxPrice = 3500 }: { minPrice?: number; maxPrice?: number } = {}
-): number {
-    const storedPrices = JSON.parse(localStorage.getItem('itemPrices') || '{}');
-
-    if (storedPrices[id]) {
-        return storedPrices[id];
-    } else {
-        const newPrice = generateRandomPrice(minPrice, maxPrice);
-        storedPrices[id] = newPrice;
-        localStorage.setItem('itemPrices', JSON.stringify(storedPrices));
-        return newPrice;
+export function getOrGeneratePrice(id: string, { minPrice = 2000, maxPrice = 3500 } = {}) {
+    if (typeof window !== 'undefined') {
+        const storedPrices = JSON.parse(localStorage.getItem('itemPrices') || '{}');
+        if (storedPrices[id]) {
+            return storedPrices[id];
+        } else {
+            const newPrice = generateRandomPrice(minPrice, maxPrice);
+            storedPrices[id] = newPrice;
+            localStorage.setItem('itemPrices', JSON.stringify(storedPrices));
+            return newPrice;
+        }
     }
+    // Fallback for server-side rendering
+    return generateRandomPrice(minPrice, maxPrice);
 }
 
 export interface Drink {
@@ -80,30 +80,41 @@ export interface OrderItem {
 }
 
 export const storeItems = (items: OrderItem[]) => {
-    localStorage.setItem('items', JSON.stringify(items));
+    if (typeof window !== 'undefined') {
+        localStorage.setItem('items', JSON.stringify(items));
+    }
 };
 
 export const getStoredItems = (): OrderItem[] => {
-    return JSON.parse(localStorage.getItem('items') ?? '[]') as OrderItem[];
+    if (typeof window !== 'undefined') {
+        const storedItems = localStorage.getItem('items');
+        return storedItems ? JSON.parse(storedItems) : [];
+    }
+    return [];
 };
 
-export const addItem = (items: OrderItem[], item: OrderItem) => {
+export const addItem = (items: OrderItem[], item: OrderItem): OrderItem[] => {
+    // Ensure items is always an array
+    items = Array.isArray(items) ? items : [];
+
     const itemExistsInOrder = items.some((prevItem) => prevItem.id === item.id);
     if (itemExistsInOrder) {
-        return items.map((preItem) => {
-            if (preItem.id === item.id) {
+        return items.map((prevItem) => {
+            if (prevItem.id === item.id) {
                 return {
-                    ...preItem,
-                    amount: preItem.amount + 1,
+                    ...prevItem,
+                    amount: prevItem.amount + 1,
                 };
             }
-            return preItem;
+            return prevItem;
         });
     }
     return [...items, item];
 };
 
-export const removeItem = (items: OrderItem[], id: string) => {
+export const removeItem = (items: OrderItem[], id: string): OrderItem[] => {
+    items = Array.isArray(items) ? items : [];
+
     return items
         .map((item) => {
             if (item.id === id) {
@@ -114,7 +125,7 @@ export const removeItem = (items: OrderItem[], id: string) => {
             }
             return item;
         })
-        .filter((meal) => meal.amount > 0);
+        .filter((item) => item.amount > 0);
 };
 
 export async function getDrinks(): Promise<Drink[]> {

@@ -6,7 +6,7 @@ import { OrderItem } from '@/lib/utils';
 type OrderRequestBody = {
     email: string;
     items: OrderItem[];
-    date: Date;
+    date: string;
 };
 
 export const orders: Record<string, Record<string, OrderRequestBody>> = {};
@@ -14,16 +14,17 @@ export const orders: Record<string, Record<string, OrderRequestBody>> = {};
 export async function POST(req: NextRequest) {
     try {
         const body: OrderRequestBody = await req.json();
-        const { email, items, date } = body;
+        const { email, items } = body;
 
-        if (!email || !items || !date) {
+        if (!email || !items) {
             return NextResponse.json(
-                { message: 'Bad request: email, items, and date are required' },
+                { message: 'Bad request: email and items are required' },
                 { status: 400 }
             );
         }
 
-        orders[email] = { ...orders[email], [uuid()]: body };
+        const date = new Date().toISOString(); // Generate timestamp in "YYYY-MM-DDTHH:mm:ss.sssZ" format
+        orders[email] = { ...orders[email], [uuid()]: { ...body, date } };
 
         return NextResponse.json(orders[email], { status: 200 });
     } catch (error) {
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url);
-        const email = searchParams.get("email");
+        const email = searchParams.get('email');
         if (!email) {
             return NextResponse.json(
                 { message: 'Bad request: email is required' },

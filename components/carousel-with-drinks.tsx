@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,37 +10,26 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from '@/components/ui/carousel';
-import { Button } from '@/components/ui/button';
-import { getMeals, getOrGeneratePrice, Meal, OrderItem } from '@/lib/utils';
+import { Drink, OrderItem, getOrGeneratePrice, addItem, storeItems } from '@/lib/utils';
 import SkeletonCard from './SkeletonCard';
+import { Button } from './ui/button';
 
-interface CarouselWithMealsProps {
-    onOrderMeal: (meal: OrderItem) => void;
+interface CarouselWithDrinksProps {
+    drinks: Drink[];
+    onOrderDrink: (drink: OrderItem) => void;
+    loading: boolean;
 }
 
-export function CarouselWithMeals({ onOrderMeal }: CarouselWithMealsProps) {
-    const [meals, setMeals] = useState<Meal[]>([]);
-    const [loading, setLoading] = useState(true); // Add loading state
-
-    useEffect(() => {
-        async function fetchMeals() {
-            setLoading(true); // Set loading to true when fetching meals
-            const mealsData = await getMeals();
-            setMeals(mealsData);
-            setLoading(false); // Set loading to false after fetching meals
-        }
-        fetchMeals();
-    }, []);
-
-    const handleOrderClick = (meal: Meal) => {
-        const mealWithPrice: OrderItem = {
-            id: meal.idMeal,
-            name: meal.strMeal,
-            price: getOrGeneratePrice(meal.idMeal),
+export function CarouselWithDrinks({ drinks, onOrderDrink, loading }: CarouselWithDrinksProps) {
+    const handleOrderClick = (drink: Drink) => {
+        const drinkWithPrice: OrderItem = {
+            id: drink.idDrink,
+            name: drink.strDrink,
+            price: getOrGeneratePrice(drink.idDrink),
             amount: 1,
-            thumbnail: meal.strMealThumb,
+            thumbnail: drink.strDrinkThumb,
         };
-        onOrderMeal(mealWithPrice);
+        onOrderDrink(drinkWithPrice);
     };
 
     return (
@@ -51,21 +42,21 @@ export function CarouselWithMeals({ onOrderMeal }: CarouselWithMealsProps) {
                                   <SkeletonCard />
                               </CarouselItem>
                           ))
-                        : meals.map((meal) => {
-                              const randomPrice = getOrGeneratePrice(meal.idMeal);
+                        : drinks.map((drink) => {
+                              const randomPrice = getOrGeneratePrice(drink.idDrink);
                               return (
-                                  <CarouselItem key={meal.idMeal}>
+                                  <CarouselItem key={drink.idDrink}>
                                       <div>
                                           <Card>
                                               <CardHeader>
                                                   <div>
                                                       <CardTitle className="text-center pb-4 truncate">
-                                                          {meal.strMeal}
+                                                          {drink.strDrink}
                                                       </CardTitle>
                                                       <div className="flex justify-center">
                                                           <Image
-                                                              src={meal.strMealThumb}
-                                                              alt="Meal Thumbnail"
+                                                              src={drink.strDrinkThumb}
+                                                              alt="Drink Thumbnail"
                                                               width={500}
                                                               height={500}
                                                           />
@@ -76,7 +67,9 @@ export function CarouselWithMeals({ onOrderMeal }: CarouselWithMealsProps) {
                                                           </h4>
                                                           <Button
                                                               variant={'secondary'}
-                                                              onClick={() => handleOrderClick(meal)}
+                                                              onClick={() =>
+                                                                  handleOrderClick(drink)
+                                                              }
                                                           >
                                                               Order
                                                           </Button>

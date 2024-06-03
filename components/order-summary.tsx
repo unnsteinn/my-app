@@ -1,10 +1,9 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import Image from 'next/image';
 import { X } from 'lucide-react';
-import { OrderItem, storeItems } from '@/lib/utils';
+import { OrderItem } from '@/lib/utils';
 
 interface OrderSummaryProps {
     items: OrderItem[];
@@ -12,22 +11,24 @@ interface OrderSummaryProps {
     children?: React.ReactNode;
 }
 
-const OrderSummary: React.FC<OrderSummaryProps> = ({ items, onRemoveItem, children }) => {
-    const totalCost = items.reduce((total, item) => total + (item.price * item.amount), 0);
+const OrderSummary: React.FC<OrderSummaryProps> = ({ items = [], onRemoveItem, children }) => {
+    items = Array.isArray(items) ? items : [];
+
+    const totalCost = items.reduce((total, item) => total + item.price * item.amount, 0);
 
     return (
-        <Card className="w-9/12">
+        <Card className="w-full">
             <CardHeader>
                 <CardTitle className="text-center">Your Orders</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="overflow-y-auto">
                 {items.length === 0 ? (
                     <p>No orders yet.</p>
                 ) : (
                     <div>
                         {items.map((item) => (
                             <div
-                                key={`${item.id}-${item.price}`}
+                                key={item.id}
                                 className="flex justify-between items-center py-2 border-b"
                             >
                                 <span>
@@ -54,8 +55,8 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ items, onRemoveItem, childr
                             </div>
                         ))}
                         <div className="flex justify-between pt-4">
-                            <span>Total Cost:</span>
-                            <span>{totalCost}kr.</span>
+                            <span className="font-bold">Total Cost:</span>
+                            <span className="mr-4 font-bold">{totalCost}kr.</span>
                         </div>
 
                         {children}

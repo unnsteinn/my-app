@@ -57,21 +57,39 @@ export function NavigationMenuDemo() {
         <NavigationMenu>
             <NavigationMenuList>
                 <NavigationMenuItem>
-                    <NavigationMenuLink href="/" className="font-bold">
-                        Home
+                    <NavigationMenuLink
+                        href="/"
+                        style={{ color: '#d26f5f' }}
+                        className="font-bold text-2xl"
+                    >
+                        HOME
                     </NavigationMenuLink>
-                    <NavigationMenuTrigger></NavigationMenuTrigger>
+                    <NavigationMenuTrigger
+                        className=""
+                        style={{ color: '#d26f5f' }}
+                    ></NavigationMenuTrigger>
                     <NavigationMenuContent>
                         <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                            <ListItem href="/my-order" title="My order">
-                                Access your orders.
-                            </ListItem>
-                            <ListItem href="/about" title="About">
-                                Learn more about lil bits.
-                            </ListItem>
-                            <ListItem href="/contact" title="Contact">
-                                Feel free to contact us anytime!
-                            </ListItem>
+                            <ListItem
+                                style={{ color: '#dfe594' }}
+                                href="/booking"
+                                title="BOOK A TABLE"
+                            ></ListItem>
+                            <ListItem
+                                style={{ color: '#dfe594' }}
+                                href="/my-order"
+                                title="MY ORDER"
+                            ></ListItem>
+                            <ListItem
+                                style={{ color: '#dfe594' }}
+                                href="/about"
+                                title="ABOUT LIL BITS"
+                            ></ListItem>
+                            <ListItem
+                                style={{ color: '#dfe594' }}
+                                href="/contact"
+                                title="CONTACT"
+                            ></ListItem>
                         </ul>
                     </NavigationMenuContent>
                 </NavigationMenuItem>
@@ -93,7 +111,7 @@ const ListItem = React.forwardRef<React.ElementRef<'a'>, React.ComponentPropsWit
                         )}
                         {...props}
                     >
-                        <div className="text-sm font-medium leading-none">{title}</div>
+                        <div className="text-lg font-bold leading-none">{title}</div>
                         <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                             {children}
                         </p>
