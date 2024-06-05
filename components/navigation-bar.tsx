@@ -77,6 +77,11 @@ export function NavigationMenuDemo() {
                             ></ListItem>
                             <ListItem
                                 style={{ color: '#dfe594' }}
+                                href="/my-booking"
+                                title="FIND MY BOOKING"
+                            ></ListItem>
+                            <ListItem
+                                style={{ color: '#dfe594' }}
                                 href="/my-order"
                                 title="MY ORDER"
                             ></ListItem>

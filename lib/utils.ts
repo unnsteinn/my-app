@@ -40,7 +40,6 @@ export function getOrGeneratePrice(id: string, { minPrice = 2000, maxPrice = 350
             return newPrice;
         }
     }
-    // Fallback for server-side rendering
     return generateRandomPrice(minPrice, maxPrice);
 }
 
@@ -94,7 +93,6 @@ export const getStoredItems = (): OrderItem[] => {
 };
 
 export const addItem = (items: OrderItem[], item: OrderItem): OrderItem[] => {
-    // Ensure items is always an array
     items = Array.isArray(items) ? items : [];
 
     const itemExistsInOrder = items.some((prevItem) => prevItem.id === item.id);

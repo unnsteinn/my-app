@@ -10,7 +10,6 @@ interface OrderSummaryProps {
     onRemoveItem: (itemId: string) => void;
     children?: React.ReactNode;
 }
-
 const OrderSummary: React.FC<OrderSummaryProps> = ({ items = [], onRemoveItem, children }) => {
     items = Array.isArray(items) ? items : [];
 

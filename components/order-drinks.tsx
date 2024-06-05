@@ -1,7 +1,6 @@
 'use client';
 
-import { Card } from '@/components/ui/card';
-import { DrinkCard } from '@/components/DrinkCard';
+import { DrinkCard } from '@/components/drink-card';
 import React, { useEffect, useState } from 'react';
 import { addItem, Drink, getStoredItems, OrderItem, removeItem, storeItems } from '@/lib/utils';
 import OrderSummary from '@/components/order-summary';
@@ -66,12 +65,16 @@ export const OrderDrinks = ({ drinks }: { drinks: Drink[] }) => {
             </div>
             <div className="xl:col-start-3 xl:col-span-1">
                 <OrderSummary items={orderedItems} onRemoveItem={handleRemoveMeal}>
-                    <div className="mt-4 flex justify-center">
+                    <div className="mt-4 flex justify-evenly">
                         <Link href="/">
-                            <Button onClick={() => storeItems(orderedItems)}>Back</Button>
+                            <Button variant="secondary" onClick={() => storeItems(orderedItems)}>
+                                Back
+                            </Button>
                         </Link>
                         <Link href="/my-order">
-                            <Button onClick={() => storeItems(orderedItems)}>Next</Button>
+                            <Button variant="secondary" onClick={() => storeItems(orderedItems)}>
+                                Next
+                            </Button>
                         </Link>
                     </div>
                 </OrderSummary>

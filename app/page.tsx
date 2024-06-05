@@ -9,7 +9,7 @@ import { addItem, OrderItem, removeItem, storeItems, getStoredItems } from '@/li
 import { Input } from '@/components/ui/input';
 import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FoundOrderCard } from '@/components/FoundOrderCard';
+import { FoundOrderCard } from '@/components/found-order-card';
 
 type ItemsResponse = { email: string; items: OrderItem[]; date: string };
 

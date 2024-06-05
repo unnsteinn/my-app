@@ -13,8 +13,8 @@ export default function About() {
         <main>
             <Carousel>
                 <CarouselContent>
-                    <CarouselItem className="flex justify-center">
-                        <Card className="p-10 lg:w-3/4">
+                    <CarouselItem className="flex justify-center h-fit">
+                        <Card className="p-10 lg:w-1/2">
                             <h3 className="text-5xl">About Lil Bits</h3>
                             <p className="text-3xl">
                                 Welcome to Lil Bits, where culinary creativity meets comfort and

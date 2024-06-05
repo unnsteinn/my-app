@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 
 export default function MyOrder() {
-    const { push } = useRouter();
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState('');
     const [orderedItems, setOrderedItems] = useState<OrderItem[]>([]);
@@ -35,7 +35,7 @@ export default function MyOrder() {
             items: getStoredItems(),
             date: new Date().toLocaleDateString(),
         });
-        push('/');
+        router.push('/thanks-for-ordering');
     };
 
     const handleRemoveItem = (id: string) => {
@@ -46,7 +46,7 @@ export default function MyOrder() {
     return (
         <form onSubmit={handleSubmit}>
             <OrderSummary items={orderedItems} onRemoveItem={handleRemoveItem}>
-                <div className="flex flex-col pt-4 items-center gap-4">
+                <div className="flex flex-col pt-4 items-center gap-5">
                     <Input
                         className="w-80 text-black"
                         placeholder="Please enter your email address"
@@ -55,7 +55,9 @@ export default function MyOrder() {
                         onChange={(e) => setEmail(e.target.value)}
                     />
                     {emailError && <p className="text-red-500">{emailError}</p>}
-                    <Button type="submit">Complete order</Button>
+                    <Button variant="secondary" type="submit">
+                        Complete order
+                    </Button>
                 </div>
             </OrderSummary>
         </form>

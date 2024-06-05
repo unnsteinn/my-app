@@ -1,10 +1,13 @@
 'use client';
 
+import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
-import { CalendarIcon, ClockIcon } from 'lucide-react';
+import { CalendarIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -21,7 +24,8 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from '@/components/ui/use-toast';
 
-import React, { useState } from 'react';
+import { Card, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 
 const FormSchema = z.object({
     dob: z
@@ -61,146 +65,185 @@ export default function CalendarForm() {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
     });
+    const router = useRouter();
 
-    function onSubmit(data: z.infer<typeof FormSchema>) {
-        toast({
-            title: 'You submitted the following values:',
-            description: (
-                <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                    <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-                </pre>
-            ),
-        });
+    async function onSubmit(data: z.infer<typeof FormSchema>) {
+        try {
+            const response = await axios.post('/api/bookings', data);
+            toast({
+                title: 'Booking Successful',
+                description: (
+                    <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+                        <code className="text-white">{JSON.stringify(response.data, null, 2)}</code>
+                    </pre>
+                ),
+            });
+            router.push('/thanks-for-booking'); // Navigate only after successful submission
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                toast({
+                    title: 'Booking Failed',
+                    description: (
+                        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+                            <code className="text-white">
+                                {error.response?.data.message ?? error.message}
+                            </code>
+                        </pre>
+                    ),
+                });
+            } else {
+                toast({
+                    title: 'Booking Failed',
+                    description: (
+                        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+                            <code className="text-white">{String(error)}</code>
+                        </pre>
+                    ),
+                });
+            }
+        }
     }
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <FormField
-                    control={form.control}
-                    name="dob"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-col text-black">
-                            <FormLabel style={{ color: '#dfe594' }}>Date of booking</FormLabel>
-                            <Popover>
-                                <PopoverTrigger asChild>
+        <div className="flex justify-center">
+            <Card className="w-full p-10 mb-4 lg:w-1/2">
+                <CardTitle className="flex justify-center pb-6">Book a table</CardTitle>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                        <FormField
+                            control={form.control}
+                            name="dob"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col text-black">
+                                    <FormLabel style={{ color: '#dfe594' }}>
+                                        Date of booking
+                                    </FormLabel>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <FormControl>
+                                                <Button
+                                                    variant={'outline'}
+                                                    className={cn(
+                                                        'w-[240px] pl-3 text-left font-normal',
+                                                        !field.value && 'text-muted-foreground'
+                                                    )}
+                                                >
+                                                    {field.value ? (
+                                                        format(field.value, 'PPP')
+                                                    ) : (
+                                                        <span>Pick a date</span>
+                                                    )}
+                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-70" />
+                                                </Button>
+                                            </FormControl>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0" align="start">
+                                            <Calendar
+                                                mode="single"
+                                                selected={field.value}
+                                                onSelect={field.onChange}
+                                                disabled={(date) => date < new Date()}
+                                                initialFocus
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="time"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col text-black">
+                                    <FormLabel style={{ color: '#dfe594' }}>
+                                        Time of booking
+                                    </FormLabel>
                                     <FormControl>
-                                        <Button
-                                            variant={'outline'}
-                                            className={cn(
-                                                'w-[240px] pl-3 text-left font-normal',
-                                                !field.value && 'text-muted-foreground'
-                                            )}
-                                        >
-                                            {field.value ? (
-                                                format(field.value, 'PPP')
-                                            ) : (
-                                                <span>Pick a date</span>
-                                            )}
-                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-70" />
-                                        </Button>
+                                        <div className="w-fit">
+                                            <Input
+                                                {...field}
+                                                type="time"
+                                                className="input"
+                                                min="16:00"
+                                                max="23:00"
+                                            />
+                                        </div>
                                     </FormControl>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
-                                    <Calendar
-                                        mode="single"
-                                        selected={field.value}
-                                        onSelect={field.onChange}
-                                        disabled={(date) => date < new Date()}
-                                        initialFocus
-                                    />
-                                </PopoverContent>
-                            </Popover>
-                            <FormDescription>
-                                <span className="text-white">
-                                    Please note that the restaurant is open from 16:00 to 23:00.
-                                </span>
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="time"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-col text-black">
-                            <FormLabel style={{ color: '#dfe594' }}>Time of booking</FormLabel>
-                            <FormControl>
-                                <div className="relative">
-                                    <input
-                                        {...field}
-                                        type="time"
-                                        className="input"
-                                        min="16:00"
-                                        max="23:00"
-                                    />
-                                </div>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-col text-black">
-                            <FormLabel style={{ color: '#dfe594' }}>Name</FormLabel>
-                            <FormControl>
-                                <input
-                                    {...field}
-                                    className="input"
-                                    type="text"
-                                    placeholder="Your name"
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-col text-black">
-                            <FormLabel style={{ color: '#dfe594' }}>Email</FormLabel>
-                            <FormControl>
-                                <input
-                                    {...field}
-                                    className="input"
-                                    type="email"
-                                    placeholder="Your email"
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="guests"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-col text-black">
-                            <FormLabel style={{ color: '#dfe594' }}>Number of Guests</FormLabel>
-                            <FormControl>
-                                <input
-                                    {...field}
-                                    className="input"
-                                    type="number"
-                                    placeholder="Number of guests"
-                                    min={1}
-                                    max={20}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <Button variant={'secondary'} type="submit">
-                    Submit
-                </Button>
-            </form>
-        </Form>
+                                    <FormDescription>
+                                        <span className="text-white">
+                                            Please note that the restaurant is open from 16:00 to
+                                            23:00.
+                                        </span>
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col text-black">
+                                    <FormLabel style={{ color: '#dfe594' }}>Name</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            className="input"
+                                            type="text"
+                                            placeholder="Your name"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col text-black">
+                                    <FormLabel style={{ color: '#dfe594' }}>Email</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            className="input"
+                                            type="email"
+                                            placeholder="Your email"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="guests"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col text-black">
+                                    <FormLabel style={{ color: '#dfe594' }}>
+                                        Number of Guests
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            className="input w-fit"
+                                            type="number"
+                                            placeholder="Number of guests"
+                                            min={1}
+                                            max={20}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <Button variant={'secondary'} type="submit">
+                            Submit
+                        </Button>
+                    </form>
+                </Form>
+            </Card>
+        </div>
     );
 }
