@@ -35,6 +35,7 @@ export default function MyOrder() {
             items: getStoredItems(),
             date: new Date().toLocaleDateString(),
         });
+        localStorage.removeItem('items');
         router.push('/thanks-for-ordering');
     };
 

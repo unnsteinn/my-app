@@ -118,9 +118,8 @@ export default function Home() {
                 {showFoundOrder &&
                     savedOrders &&
                     Object.values(savedOrders).map((order) => (
-                        <div className="pb-4">
+                        <div className="pb-4" key={order.date}>
                             <FoundOrderCard
-                                key={order.date}
                                 orderDate={order.date}
                                 items={order.items}
                                 expanded={!!expandedOrders[order.date]}

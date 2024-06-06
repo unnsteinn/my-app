@@ -20,8 +20,8 @@ export default function About() {
                                 Welcome to Lil Bits, where culinary creativity meets comfort and
                                 tradition. Nestled in the heart of Reykjavík, Lil Bits is your go-to
                                 destination for an unforgettable dining experience. Our name
-                                reflects our philosophy: it's the little bits that make life
-                                special, and we're here to celebrate those moments with you.
+                                reflects our philosophy: it&apos;s the little bits that make life
+                                special, and we&apos;re here to celebrate those moments with you.
                             </p>
                         </Card>
                     </CarouselItem>
@@ -46,8 +46,8 @@ export default function About() {
                                 creations, all made from the freshest ingredients. From our
                                 signature appetizers to our mouthwatering mains and decadent
                                 desserts, every dish is crafted with care and attention to detail.
-                                Whether you're in the mood for a hearty meal or a light bite, you'll
-                                find something to love at Lil Bits.
+                                Whether you&apos;re in the mood for a hearty meal or a light bite,
+                                you&apos;ll find something to love at Lil Bits.
                             </p>
                         </Card>
                     </CarouselItem>
@@ -67,11 +67,11 @@ export default function About() {
                             <h3 className="text-5xl">Join Us</h3>
                             <p className="text-3xl">
                                 We invite you to join us at Lil Bits and discover the little things
-                                that make our restaurant special. Whether you're celebrating a
+                                that make our restaurant special. Whether you&apos;re celebrating a
                                 special occasion, enjoying a night out, or simply craving a
-                                delicious meal, we're here to make your dining experience memorable.
-                                Thank you for choosing Lil Bits. We look forward to serving you
-                                soon!
+                                delicious meal, we&apos;re here to make your dining experience
+                                memorable. Thank you for choosing Lil Bits. We look forward to
+                                serving you soon!
                             </p>
                         </Card>
                     </CarouselItem>
