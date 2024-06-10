@@ -21,10 +21,10 @@ export const OrderDrinks = ({ drinks }: { drinks: Drink[] }) => {
 
     useEffect(() => {
         const handleResize = () => {
-            setIsMobileView(window.innerWidth <= 1025); // Change the breakpoint as needed
+            setIsMobileView(window.innerWidth <= 1025);
         };
 
-        handleResize(); // Set initial value
+        handleResize();
         window.addEventListener('resize', handleResize);
 
         return () => {
@@ -71,7 +71,7 @@ export const OrderDrinks = ({ drinks }: { drinks: Drink[] }) => {
                                 Back
                             </Button>
                         </Link>
-                        <Link href="/my-order">
+                        <Link href="/booking">
                             <Button variant="secondary" onClick={() => storeItems(orderedItems)}>
                                 Next
                             </Button>

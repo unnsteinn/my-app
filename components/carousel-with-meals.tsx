@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Carousel,
     CarouselContent,
@@ -18,15 +18,21 @@ interface CarouselWithMealsProps {
 
 export function CarouselWithMeals({ onOrderMeal }: CarouselWithMealsProps) {
     const [meals, setMeals] = useState<Meal[]>([]);
-    const [loading, setLoading] = useState(true); // Add loading state
+    const [loading, setLoading] = useState(true);
+    const [message, setMessage] = useState<string | null>(null);
+    const fetchRef = useRef(false); // useRef to prevent double fetch
 
     useEffect(() => {
+        if (fetchRef.current) return; // Prevent running again
+        fetchRef.current = true;
+
         async function fetchMeals() {
-            setLoading(true); // Set loading to true when fetching meals
+            setLoading(true);
             const mealsData = await getMeals();
             setMeals(mealsData);
-            setLoading(false); // Set loading to false after fetching meals
+            setLoading(false);
         }
+
         fetchMeals();
     }, []);
 
@@ -36,9 +42,12 @@ export function CarouselWithMeals({ onOrderMeal }: CarouselWithMealsProps) {
             name: meal.strMeal,
             price: getOrGeneratePrice(meal.idMeal),
             amount: 1,
+            type: 'dish',
             thumbnail: meal.strMealThumb,
         };
         onOrderMeal(mealWithPrice);
+        setMessage(`${meal.strMeal} added to your order`);
+        setTimeout(() => setMessage(null), 1500);
     };
 
     return (
@@ -89,6 +98,13 @@ export function CarouselWithMeals({ onOrderMeal }: CarouselWithMealsProps) {
                               );
                           })}
                 </CarouselContent>
+                {message && (
+                    <div className="flex justify-center">
+                        <div className="absolute top-1/2 transform -translate-y-1/2">
+                            <Card className="p-4">{message}</Card>
+                        </div>
+                    </div>
+                )}
                 <div className="absolute left-14 top-1/2 transform -translate-y-1/2">
                     <CarouselPrevious />
                 </div>

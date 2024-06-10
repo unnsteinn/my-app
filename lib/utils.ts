@@ -70,10 +70,21 @@ export interface Response {
     drinks: Drink[];
 }
 
+export type OrderRequest = {
+    name: string;
+    count: number;
+    email: string;
+    items: OrderItem[];
+    date: string;
+};
+
+export type OrderResponse = OrderRequest & { id: number };
+
 export interface OrderItem {
     id: string;
     name: string;
     price: number;
+    type: 'drink' | 'dish';
     amount: number;
     thumbnail: string;
 }
@@ -92,6 +103,25 @@ export const getStoredItems = (): OrderItem[] => {
     return [];
 };
 
+export const storeOrderInfo = (info: Omit<OrderRequest, 'items'>) => {
+    if (typeof window !== 'undefined') {
+        localStorage.setItem('orderInfo', JSON.stringify(info));
+    }
+};
+
+export const getOrderInfo = (): OrderRequest | null => {
+    if (typeof window !== 'undefined') {
+        const orderInfo = JSON.parse(localStorage.getItem('orderInfo') ?? '{}');
+        return {
+            name: orderInfo.name,
+            email: orderInfo.email,
+            date: orderInfo.date,
+            items: getStoredItems(),
+            count: orderInfo.count,
+        };
+    }
+    return null;
+};
 export const addItem = (items: OrderItem[], item: OrderItem): OrderItem[] => {
     items = Array.isArray(items) ? items : [];
 

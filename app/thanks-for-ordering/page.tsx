@@ -26,9 +26,6 @@ export default function ThanksForOrdering() {
                     <Button variant="secondary" onClick={handleBackToHomepage}>
                         Back to Homepage
                     </Button>
-                    <Button variant="secondary" onClick={handleBookATable}>
-                        Book a Table
-                    </Button>
                 </CardFooter>
             </Card>
         </div>

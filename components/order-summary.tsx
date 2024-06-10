@@ -11,18 +11,16 @@ interface OrderSummaryProps {
     children?: React.ReactNode;
 }
 const OrderSummary: React.FC<OrderSummaryProps> = ({ items = [], onRemoveItem, children }) => {
-    items = Array.isArray(items) ? items : [];
-
     const totalCost = items.reduce((total, item) => total + item.price * item.amount, 0);
 
     return (
         <Card className="w-full">
             <CardHeader>
-                <CardTitle className="text-center">Your Orders</CardTitle>
+                <CardTitle className="text-center">Your Order</CardTitle>
             </CardHeader>
             <CardContent className="overflow-y-auto">
                 {items.length === 0 ? (
-                    <p>No orders yet.</p>
+                    <h4>No orders yet.</h4>
                 ) : (
                     <div>
                         {items.map((item) => (

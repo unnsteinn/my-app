@@ -3,11 +3,9 @@ import { Inter as FontSans } from 'next/font/google';
 
 import { cn } from '@/lib/utils';
 import { NavigationMenuDemo } from '@/components/navigation-bar';
-import { TailwindIndicator } from '@/components/tailwind-indicator';
 import Logo from '@/public/lil-bits.svg';
 import Image from 'next/image';
 
-// Define RootLayoutProps interface
 interface RootLayoutProps {
     children: React.ReactNode;
 }
@@ -43,8 +41,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
                         <NavigationMenuDemo />
                     </div>
                 </div>
-                <TailwindIndicator />
-
                 {children}
             </body>
         </html>

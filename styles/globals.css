@@ -96,3 +96,15 @@ blockquote {
 .bg-custom-background {
     background-color: #436156;
 }
+
+.bg-destructive-new {
+    background-color: #d26f5f;
+}
+
+.bg-secondary-new {
+    background-color: #faedcd;
+}
+
+.text-secondary-foreground-new {
+    color: #d26f5f;
+}

@@ -5,32 +5,37 @@ import { CarouselWithMeals } from '@/components/carousel-with-meals';
 import OrderSummary from '@/components/order-summary';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { addItem, OrderItem, removeItem, storeItems, getStoredItems } from '@/lib/utils';
+import {
+    addItem,
+    OrderItem,
+    removeItem,
+    storeItems,
+    getStoredItems,
+    OrderResponse,
+} from '@/lib/utils';
 import { Input } from '@/components/ui/input';
-import axios from 'axios';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { FoundOrderCard } from '@/components/found-order-card';
-
-type ItemsResponse = { email: string; items: OrderItem[]; date: string };
+import { deleteOrder, getOrdersByEmail } from '@/lib/orderApi';
 
 export default function Home() {
     const [email, setEmail] = useState<string>('');
     const [emailError, setEmailError] = useState<string>('');
     const [orderNotFoundError, setOrderNotFoundError] = useState<string>('');
     const [orderedItems, setOrderedItems] = useState<OrderItem[]>([]);
-    const [savedOrders, setSavedOrders] = useState<Record<string, ItemsResponse> | undefined>();
+    const [savedOrders, setSavedOrders] = useState<OrderResponse[]>([]);
     const [showFoundOrder, setShowFoundOrder] = useState<boolean>(true);
-    const [expandedOrders, setExpandedOrders] = useState<Record<string, boolean>>({});
+    const [expandedOrders, setExpandedOrders] = useState<Record<number, boolean>>({});
 
     useEffect(() => {
         setOrderedItems(getStoredItems());
     }, []);
 
-    const handleToggleExpand = (timestamp: string) => {
+    const handleToggleExpand = (id: number) => {
         setExpandedOrders((prevExpandedOrders) => {
             return {
                 ...prevExpandedOrders,
-                [timestamp]: !prevExpandedOrders[timestamp],
+                [id]: !prevExpandedOrders[id],
             };
         });
     };
@@ -60,13 +65,11 @@ export default function Home() {
         setEmailError('');
         setOrderNotFoundError('');
         try {
-            const orders = await axios.get<Record<string, ItemsResponse>>(
-                `/api/order?email=${email}`
-            );
-            if (Object.keys(orders.data).length === 0) {
+            const orders = await getOrdersByEmail(email);
+            if (orders.length === 0) {
                 setOrderNotFoundError('No order found with this email address');
             } else {
-                setSavedOrders(orders.data);
+                setSavedOrders(orders);
             }
         } catch (error) {
             console.error('Error fetching orders:', error);
@@ -116,14 +119,26 @@ export default function Home() {
             </div>
             <div className="flex-col justify-center lg:col-span-4">
                 {showFoundOrder &&
-                    savedOrders &&
-                    Object.values(savedOrders).map((order) => (
+                    savedOrders?.map((order) => (
                         <div className="pb-4" key={order.date}>
                             <FoundOrderCard
+                                id={order.id}
+                                name={order.name}
+                                count={order.count}
                                 orderDate={order.date}
                                 items={order.items}
-                                expanded={!!expandedOrders[order.date]}
-                                onToggleExpand={() => handleToggleExpand(order.date)}
+                                expanded={!!expandedOrders[order.id]}
+                                onToggleExpand={() => handleToggleExpand(order.id)}
+                                handleDelete={async () => {
+                                    try {
+                                        await deleteOrder(order.id);
+                                        setSavedOrders((orders) =>
+                                            orders.filter((o) => o.id !== order.id)
+                                        );
+                                    } catch (e) {
+                                        console.error('Failed to delete order', e);
+                                    }
+                                }}
                             />
                         </div>
                     ))}

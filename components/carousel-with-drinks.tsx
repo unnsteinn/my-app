@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Carousel,
     CarouselContent,
@@ -10,7 +10,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from '@/components/ui/carousel';
-import { Drink, OrderItem, getOrGeneratePrice, addItem, storeItems } from '@/lib/utils';
+import { Drink, OrderItem, getOrGeneratePrice } from '@/lib/utils';
 import SkeletonCard from './SkeletonCard';
 import { Button } from './ui/button';
 
@@ -21,15 +21,20 @@ interface CarouselWithDrinksProps {
 }
 
 export function CarouselWithDrinks({ drinks, onOrderDrink, loading }: CarouselWithDrinksProps) {
+    const [message, setMessage] = useState<string | null>(null);
+
     const handleOrderClick = (drink: Drink) => {
         const drinkWithPrice: OrderItem = {
             id: drink.idDrink,
             name: drink.strDrink,
             price: getOrGeneratePrice(drink.idDrink),
             amount: 1,
+            type: 'drink',
             thumbnail: drink.strDrinkThumb,
         };
         onOrderDrink(drinkWithPrice);
+        setMessage(`${drink.strDrink} added to your order`);
+        setTimeout(() => setMessage(null), 1500);
     };
 
     return (
@@ -82,6 +87,13 @@ export function CarouselWithDrinks({ drinks, onOrderDrink, loading }: CarouselWi
                               );
                           })}
                 </CarouselContent>
+                {message && (
+                    <div className="flex justify-center">
+                        <div className="absolute top-1/2 transform -translate-y-1/2">
+                            <Card className="p-4">{message}</Card>
+                        </div>
+                    </div>
+                )}
                 <div className="absolute left-14 top-1/2 transform -translate-y-1/2">
                     <CarouselPrevious />
                 </div>

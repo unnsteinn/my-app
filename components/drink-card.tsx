@@ -12,6 +12,7 @@ export const DrinkCard = ({
     onOrderDrink: (drink: OrderItem) => void;
 }) => {
     const [price, setPrice] = useState<number | null>(null);
+    const [message, setMessage] = useState<string | null>(null);
 
     useEffect(() => {
         const generatedPrice = getOrGeneratePrice(drink.idDrink);
@@ -24,19 +25,22 @@ export const DrinkCard = ({
                 id: drink.idDrink,
                 name: drink.strDrink,
                 amount: 1,
+                type: 'drink',
                 thumbnail: drink.strDrinkThumb,
                 price: price,
             };
             onOrderDrink(drinkWithPrice);
+            setMessage(`${drink.strDrink} added to your order`);
+            setTimeout(() => setMessage(null), 1500);
         }
     };
 
     return (
-        <Card className="p-1">
+        <Card className="p-1 relative">
             <CardHeader>
                 <div>
                     <CardTitle className="text-center pb-4">{drink.strDrink}</CardTitle>
-                    <CardContent className="flex justify-center">
+                    <CardContent className="flex justify-center relative">
                         <Image
                             src={drink.strDrinkThumb}
                             alt="Drink Thumbnail"
@@ -56,6 +60,13 @@ export const DrinkCard = ({
                     </CardFooter>
                 </div>
             </CardHeader>
+            {message && (
+                <div className="flex justify-center">
+                    <div className="absolute top-1/2 transform -translate-y-1/2">
+                        <Card className="p-4">{message}</Card>
+                    </div>
+                </div>
+            )}
         </Card>
     );
 };

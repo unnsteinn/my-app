@@ -9,7 +9,7 @@ import { z } from 'zod';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
-import { cn } from '@/lib/utils';
+import { cn, storeOrderInfo } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -69,16 +69,16 @@ export default function CalendarForm() {
 
     async function onSubmit(data: z.infer<typeof FormSchema>) {
         try {
-            const response = await axios.post('/api/bookings', data);
-            toast({
-                title: 'Booking Successful',
-                description: (
-                    <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                        <code className="text-white">{JSON.stringify(response.data, null, 2)}</code>
-                    </pre>
-                ),
+            const datePart = data.dob.toISOString().split('T')[0];
+            const date = `${datePart}T${data.time}`;
+            storeOrderInfo({
+                name: data.name,
+                count: data.guests,
+                email: data.email,
+                date,
             });
-            router.push('/thanks-for-booking'); // Navigate only after successful submission
+
+            router.push('/my-order');
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 toast({
