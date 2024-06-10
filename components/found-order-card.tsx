@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
@@ -26,8 +26,14 @@ export const FoundOrderCard: React.FC<FoundOrderCardProps> = ({
     onToggleExpand,
     handleDelete,
 }) => {
+    const [showConfirm, setShowConfirm] = useState(false);
     const totalCost = items.reduce((total, item) => total + item.price * item.amount, 0);
-    console.log(name);
+
+    const confirmDelete = async () => {
+        setShowConfirm(false);
+        await handleDelete();
+    };
+
     return (
         <Card onClick={onToggleExpand} className="w-full">
             <CardHeader>
@@ -77,12 +83,29 @@ export const FoundOrderCard: React.FC<FoundOrderCardProps> = ({
                             <span className="mr-4 font-bold">{count}</span>
                         </div>
                     </CardContent>
-                    <CardFooter>
-                        <Button variant="destructive" onClick={handleDelete}>
+                    <CardFooter className="flex justify-center">
+                        <Button variant="destructive" onClick={() => setShowConfirm(true)}>
                             Delete
                         </Button>
                     </CardFooter>
                 </>
+            )}
+            {showConfirm && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <Card>
+                        <div className="p-4">
+                            <p>Are you sure you want to delete this order?</p>
+                            <div className="flex justify-evenly pt-4">
+                                <Button variant="secondary" onClick={() => setShowConfirm(false)}>
+                                    No
+                                </Button>
+                                <Button variant="destructive" onClick={confirmDelete}>
+                                    Yes
+                                </Button>
+                            </div>
+                        </div>
+                    </Card>
+                </div>
             )}
         </Card>
     );
